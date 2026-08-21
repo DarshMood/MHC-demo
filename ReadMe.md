@@ -49,3 +49,81 @@ GitHub Actions
 
 This stack is pretty similar to what I'll experience at MHC giving me some practical knowledge and ideas of the system before I start my new position. 
 
+┌─────────────────────────────┐
+│         User / Browser      │
+└──────────────┬──────────────┘
+               │
+               │ HTTP
+               ▼
+┌─────────────────────────────┐
+│      React + TypeScript     │
+│          Frontend           │
+│                             │
+│      localhost:5173         │
+└──────────────┬──────────────┘
+               │
+               │ REST / JSON
+               ▼
+┌─────────────────────────────┐
+│    Node.js + TypeScript     │
+│       Express Backend       │
+│                             │
+│      localhost:3000         │
+└──────────────┬──────────────┘
+               │
+               │ SQL via pg
+               ▼
+┌─────────────────────────────┐
+│         PostgreSQL          │
+│                             │
+│       mhc_demo database     │
+│                             │
+│      repair_orders table    │
+└─────────────────────────────┘
+
+## Architecture
+
+```mermaid
+flowchart TD
+    User["User / Browser"]
+
+    Frontend["React + TypeScript<br/>Frontend<br/>localhost:5173"]
+
+    Backend["Node.js + TypeScript<br/>Express REST API<br/>localhost:3000"]
+
+    Database["PostgreSQL<br/>mhc_demo<br/>repair_orders"]
+
+    User -->|Interacts with UI| Frontend
+    Frontend -->|HTTP / JSON| Backend
+    Backend -->|SQL via pg| Database
+    Database -->|Query Results| Backend
+    Backend -->|JSON Response| Frontend
+```
+Goal: 
+```mermaid
+flowchart TD
+    User["User / Browser"]
+
+    subgraph Frontend["Frontend - React + TypeScript"]
+        UI["Dashboard Components"]
+        APIClient["API Service"]
+        UI --> APIClient
+    end
+
+    subgraph Backend["Backend - Node.js + TypeScript + Express"]
+        Routes["Routes"]
+        Controller["Controller"]
+        Service["Service"]
+        Repository["Repository / DB Layer"]
+
+        Routes --> Controller
+        Controller --> Service
+        Service --> Repository
+    end
+
+    DB[("PostgreSQL<br/>mhc_demo")]
+
+    User --> UI
+    APIClient -->|HTTP / JSON| Routes
+    Repository -->|SQL via pg| DB
+```

@@ -1,0 +1,110 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"Status": {
+				"enum": [
+					"IN_PROGRESS",
+					"WAITING",
+					"COMPLETED"
+				],
+				"type": "string"
+			},
+			"Priority": {
+				"enum": [
+					"LOW",
+					"MEDIUM",
+					"HIGH"
+				],
+				"type": "string"
+			},
+			"RepairOrder": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"customer_name": {
+						"type": "string"
+					},
+					"technician_name": {
+						"type": "string",
+						"nullable": true
+					},
+					"status": {
+						"$ref": "#/components/schemas/Status"
+					},
+					"priority": {
+						"$ref": "#/components/schemas/Priority"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"customer_name",
+					"technician_name",
+					"status",
+					"priority",
+					"description",
+					"created_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "mhc-demo-server",
+		"version": "1.0.0",
+		"description": "MHC demo backend",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/api/repair-orders/all": {
+			"get": {
+				"operationId": "GetAllRepairOrders",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/RepairOrder"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Repair Orders"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

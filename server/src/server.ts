@@ -1,35 +1,43 @@
 import express from "express";
 import cors from "cors";
-import { pool } from "./db/database.js";
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+import path from "path";
+
+import { RegisterRoutes } from "./generated/routes.js";
 
 const app = express();
 const PORT = 3000;
 
+const swaggerDocument = JSON.parse(
+    fs.readFileSync(
+        path.resolve("src/generated/swagger.json"),
+        "utf-8"
+    )
+);
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Health check
 app.get("/api/health", (req, res) => {
     res.json({
         status: "ok"
     });
 });
 
-app.get("/api/repair-orders", async (req, res) => {
-    try {
-        const result = await pool.query(
-            "SELECT * FROM repair_orders ORDER BY id"
-        );
+// tsoa generated routes
+RegisterRoutes(app);
 
-        res.json(result.rows);
-    } catch (error) {
-        console.error("Failed to retrieve repair orders:", error);
-
-        res.status(500).json({
-            message: "Failed to retrieve repair orders"
-        });
-    }
-});
+// Swagger UI
+app.use(
+    "/api-swagger",
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerDocument)
+);
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Swagger UI: http://localhost:${PORT}/api-swagger`);
 });
